@@ -156,3 +156,15 @@ p {
 ::-webkit-scrollbar-thumb:hover {
   background: var(--color-primary);
 }
+
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-12px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}

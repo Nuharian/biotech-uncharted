@@ -20,12 +20,28 @@ export default async function Home() {
   return (
     <div className={styles.homeContainer}>
       <section className={`${styles.hero} animate-fade-in`}>
-        <div className="container">
-          <h1 className={styles.heroTitle}>Pioneering the Future of <span className={styles.textAccent}>Biotech</span></h1>
-          <p className={styles.heroSubtitle}>Explore the cutting-edge research and unearth the mysteries of biological science with our latest publications and insights.</p>
-          <div className={styles.heroActions}>
-            <Link href="/publications" className="btn btn-primary">Read Publications</Link>
-            <Link href="/news" className="btn btn-outline">Latest News</Link>
+        <div className="container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '3rem', flexWrap: 'wrap' }}>
+          <div style={{ flex: '1.2', minWidth: '320px' }}>
+            <h1 className={styles.heroTitle}>Pioneering the Future of <span className={styles.textAccent}>Biotech</span></h1>
+            <p className={styles.heroSubtitle}>Explore the cutting-edge research and unearth the mysteries of biological science with our latest publications and insights.</p>
+            <div className={styles.heroActions}>
+              <Link href="/publications" className="btn btn-primary">Read Publications</Link>
+              <Link href="/news" className="btn btn-outline">Latest News</Link>
+            </div>
+          </div>
+          <div style={{ flex: '0.8', minWidth: '300px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+            <img 
+              src="/logo.jpg" 
+              alt="BioTech Uncharted Brand Logo" 
+              style={{ 
+                width: '100%',
+                maxWidth: '300px', 
+                borderRadius: '24px', 
+                border: '1px solid rgba(64, 224, 208, 0.25)', 
+                boxShadow: '0 0 35px rgba(64, 224, 208, 0.22)', 
+                animation: 'float 5s ease-in-out infinite' 
+              }} 
+            />
           </div>
         </div>
       </section>
