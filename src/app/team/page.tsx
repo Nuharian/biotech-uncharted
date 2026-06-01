@@ -139,7 +139,7 @@ export default async function TeamPage() {
                   margin: "0 0 1.5rem 0",
                   flexGrow: 1
                 }}>
-                  {member.bio}
+                  {member.bio || "Member of the BioTech Uncharted research team."}
                 </p>
 
                 <hr style={{ border: "none", borderTop: "1px solid rgba(255, 255, 255, 0.05)", margin: "0 0 1.25rem 0" }} />

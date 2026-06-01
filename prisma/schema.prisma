@@ -50,7 +50,7 @@ model TeamMember {
   position    String?
   linkedinUrl String?
   githubUrl   String?
-  bio         String
+  bio         String?
   imageUrl    String?
   order       Int      @default(0)
   createdAt   DateTime @default(now())

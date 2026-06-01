@@ -45,8 +45,8 @@ export default async function AdminTeam() {
         </div>
 
         <div className={styles.formGroup}>
-          <label htmlFor="bio">Biography / Description</label>
-          <textarea id="bio" name="bio" required rows={3} placeholder="Provide a brief background..."></textarea>
+          <label htmlFor="bio">Biography / Description (Optional)</label>
+          <textarea id="bio" name="bio" rows={3} placeholder="Provide a brief background..."></textarea>
         </div>
 
         <div className={styles.formGroup}>
