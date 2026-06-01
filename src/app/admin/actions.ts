@@ -134,3 +134,58 @@ export async function deleteTeamCategory(id: string) {
   revalidatePath("/");
 }
 
+export async function updateTeamMemberOrderAndCategory(formData: FormData) {
+  const id = formData.get("id") as string;
+  const categoryId = formData.get("categoryId") as string;
+  const orderStr = formData.get("order") as string;
+  const order = orderStr ? parseInt(orderStr, 10) : 0;
+
+  if (!id) {
+    throw new Error("Member ID is required");
+  }
+
+  try {
+    await prisma.teamMember.update({
+      where: { id },
+      data: {
+        categoryId: categoryId && categoryId !== "none" ? categoryId : null,
+        order: isNaN(order) ? 0 : order,
+      }
+    });
+  } catch (err) {
+    console.error("Failed to update team member order/category:", err);
+  }
+
+  revalidatePath("/admin/team");
+  revalidatePath("/team");
+  revalidatePath("/");
+}
+
+export async function updateTeamCategoryNameAndOrder(formData: FormData) {
+  const id = formData.get("id") as string;
+  const name = formData.get("name") as string;
+  const orderStr = formData.get("order") as string;
+  const order = orderStr ? parseInt(orderStr, 10) : 0;
+
+  if (!id) {
+    throw new Error("Category ID is required");
+  }
+
+  try {
+    await prisma.teamCategory.update({
+      where: { id },
+      data: {
+        name: name ? name.trim() : undefined,
+        order: isNaN(order) ? 0 : order,
+      }
+    });
+  } catch (err) {
+    console.error("Failed to update category name/order:", err);
+  }
+
+  revalidatePath("/admin/team");
+  revalidatePath("/team");
+  revalidatePath("/");
+}
+
+

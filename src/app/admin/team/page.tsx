@@ -1,6 +1,13 @@
 import { prisma } from "@/lib/prisma";
 import styles from "../admin.module.css";
-import { createTeamMember, deleteTeamMember, createTeamCategory, deleteTeamCategory } from "../actions";
+import { 
+  createTeamMember, 
+  deleteTeamMember, 
+  createTeamCategory, 
+  deleteTeamCategory,
+  updateTeamMemberOrderAndCategory,
+  updateTeamCategoryNameAndOrder
+} from "../actions";
 
 export const revalidate = 0;
 
@@ -12,58 +19,118 @@ export default async function AdminTeam() {
   });
 
   return (
-    <div style={{ maxWidth: '1200px', margin: '0 auto', paddingBottom: '3rem' }}>
-      <h1>Manage Team & Categories</h1>
+    <div style={{ maxWidth: '1200px', margin: '0 auto', paddingBottom: '4rem' }}>
+      <h1 style={{ marginBottom: '0.5rem' }}>Manage Team & Categories</h1>
+      <p style={{ color: 'var(--color-text-muted)', marginBottom: '2.5rem' }}>
+        Configure keywords (categories), drag sliders to adjust orders, and save updates dynamically.
+      </p>
       
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '2rem', marginTop: '2rem' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(380px, 1fr))', gap: '2rem' }}>
         
         {/* Category Management */}
-        <div style={{ background: 'var(--color-surface-light)', padding: '2rem', borderRadius: 'var(--border-radius)', border: '1px solid rgba(64, 224, 208, 0.15)' }}>
-          <h3 style={{ color: 'var(--color-primary)', marginBottom: '1.5rem', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '0.5rem' }}>
+        <div style={{ background: 'var(--color-surface-light)', padding: '2rem', borderRadius: 'var(--border-radius)', border: '1px solid rgba(64, 224, 208, 0.15)', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+          <h3 style={{ color: 'var(--color-primary)', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '0.5rem', margin: 0 }}>
             Manage Categories (Keywords)
           </h3>
           
+          {/* Create Category Form */}
           <form action={createTeamCategory} method="POST" className={styles.form} style={{ marginTop: 0, padding: 0, background: 'transparent' }}>
-            <div className={styles.formGroup}>
-              <label htmlFor="catName">Category / Keyword Name</label>
-              <input type="text" id="catName" name="name" required placeholder="e.g., Leadership, Researchers" />
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+              <div className={styles.formGroup}>
+                <label htmlFor="catName" style={{ fontSize: '0.85rem' }}>Category Name</label>
+                <input type="text" id="catName" name="name" required placeholder="e.g., Leadership" />
+              </div>
+              
+              <div className={styles.formGroup}>
+                <label htmlFor="catOrder" style={{ fontSize: '0.85rem' }}>Sort Order</label>
+                <input type="number" id="catOrder" name="order" defaultValue="0" placeholder="0" min="0" />
+              </div>
             </div>
             
-            <div className={styles.formGroup}>
-              <label htmlFor="catOrder">Display Order (Lower values show first)</label>
-              <input type="number" id="catOrder" name="order" defaultValue="0" placeholder="0" min="0" />
-            </div>
-            
-            <button type="submit" className="btn btn-primary" style={{ marginTop: '0.5rem' }}>
-              Add / Update Category
+            <button type="submit" className="btn btn-primary" style={{ marginTop: '0.5rem', alignSelf: 'flex-start' }}>
+              + Add New Category
             </button>
           </form>
 
-          <div style={{ marginTop: '2rem' }}>
-            <h4 style={{ color: '#ffffff', marginBottom: '1rem' }}>Existing Categories</h4>
+          {/* Edit / List Categories */}
+          <div style={{ marginTop: '1rem' }}>
+            <h4 style={{ color: '#ffffff', marginBottom: '1rem' }}>Edit Existing Categories</h4>
             {categories.length > 0 ? (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                 {categories.map(cat => (
-                  <div 
+                  <form 
                     key={cat.id} 
+                    action={updateTeamCategoryNameAndOrder} 
+                    method="POST"
                     style={{ 
                       display: 'flex', 
-                      justifyContent: 'space-between', 
-                      alignItems: 'center', 
+                      flexDirection: 'column',
+                      gap: '0.75rem',
                       background: 'rgba(255,255,255,0.02)', 
-                      padding: '0.75rem 1rem', 
+                      padding: '1rem', 
                       borderRadius: '8px',
                       border: '1px solid rgba(255,255,255,0.05)'
                     }}
                   >
-                    <div>
-                      <strong style={{ color: 'var(--color-primary)' }}>{cat.name}</strong>
-                      <span style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', marginLeft: '1rem' }}>
-                        Order: {cat.order}
-                      </span>
+                    <input type="hidden" name="id" value={cat.id} />
+                    
+                    <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+                      <input 
+                        type="text" 
+                        name="name" 
+                        defaultValue={cat.name} 
+                        required 
+                        style={{ 
+                          flex: 2,
+                          padding: '0.4rem 0.6rem',
+                          borderRadius: '4px',
+                          border: '1px solid rgba(255,255,255,0.1)',
+                          background: 'rgba(2, 11, 26, 0.8)',
+                          color: 'white',
+                          fontSize: '0.9rem'
+                        }} 
+                      />
+                      
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flex: 3 }}>
+                        <span style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>Slide Order:</span>
+                        <input 
+                          type="range" 
+                          name="order" 
+                          min="0" 
+                          max="50" 
+                          defaultValue={cat.order} 
+                          style={{ 
+                            flex: 1, 
+                            accentColor: 'var(--color-primary)', 
+                            height: '6px', 
+                            cursor: 'pointer' 
+                          }}
+                        />
+                        <span style={{ fontSize: '0.9rem', fontWeight: 'bold', color: 'var(--color-primary)', minWidth: '15px', textAlign: 'center' }}>
+                          {cat.order}
+                        </span>
+                      </div>
                     </div>
-                    <form action={deleteTeamCategory.bind(null, cat.id)} method="POST">
+
+                    <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem' }}>
                       <button 
+                        type="submit" 
+                        style={{ 
+                          background: 'rgba(64, 224, 208, 0.1)', 
+                          color: 'var(--color-primary)', 
+                          border: '1px solid rgba(64, 224, 208, 0.3)', 
+                          padding: '0.3rem 0.6rem', 
+                          borderRadius: '4px', 
+                          cursor: 'pointer',
+                          fontSize: '0.8rem',
+                          fontWeight: 600
+                        }}
+                      >
+                        Save
+                      </button>
+
+                      <button 
+                        formAction={deleteTeamCategory.bind(null, cat.id)}
                         type="submit" 
                         style={{ 
                           background: 'rgba(255, 68, 68, 0.1)', 
@@ -77,8 +144,8 @@ export default async function AdminTeam() {
                       >
                         Delete
                       </button>
-                    </form>
-                  </div>
+                    </div>
+                  </form>
                 ))}
               </div>
             ) : (
@@ -177,17 +244,17 @@ export default async function AdminTeam() {
 
       </div>
 
-      <div style={{ marginTop: '3rem' }}>
-        <h3>Current Teammates</h3>
+      {/* Teammates List & Live Drag-Order Editors */}
+      <div style={{ marginTop: '4rem' }}>
+        <h3 style={{ marginBottom: '1.5rem' }}>Current Teammates (Adjust Category & Order directly)</h3>
         {team.length > 0 ? (
           <table className={styles.table}>
             <thead>
               <tr>
                 <th>Image</th>
-                <th>Name</th>
-                <th>Category</th>
-                <th>Position</th>
-                <th>Order</th>
+                <th>Name / Position</th>
+                <th>Category Assignment</th>
+                <th>Sorting Order (Slide to Reorder)</th>
                 <th>Socials</th>
                 <th>Actions</th>
               </tr>
@@ -195,38 +262,99 @@ export default async function AdminTeam() {
             <tbody>
               {team.map(member => (
                 <tr key={member.id}>
+                  
+                  {/* Image Column */}
                   <td>
                     {member.imageUrl ? (
                       <img 
                         src={member.imageUrl} 
                         alt={member.name} 
-                        style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover' }} 
+                        style={{ width: '45px', height: '45px', borderRadius: '50%', objectFit: 'cover', border: '1px solid var(--color-primary)' }} 
                       />
                     ) : (
-                      <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', color: 'var(--color-primary)' }}>
+                      <div style={{ width: '45px', height: '45px', borderRadius: '50%', background: 'rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', color: 'var(--color-primary)' }}>
                         {member.name.substring(0, 2).toUpperCase()}
                       </div>
                     )}
                   </td>
-                  <td style={{ fontWeight: 'bold' }}>{member.name}</td>
+
+                  {/* Name & Position Column */}
                   <td>
-                    {member.category ? (
-                      <span style={{ 
-                        background: 'rgba(64, 224, 208, 0.1)', 
-                        color: 'var(--color-primary)', 
-                        padding: '0.25rem 0.5rem', 
-                        borderRadius: '4px',
-                        fontSize: '0.8rem',
-                        border: '1px solid rgba(64, 224, 208, 0.2)'
-                      }}>
-                        {member.category.name}
-                      </span>
-                    ) : (
-                      <span style={{ color: 'rgba(255,255,255,0.3)', fontSize: '0.85rem' }}>General</span>
-                    )}
+                    <div style={{ fontWeight: 'bold', color: '#ffffff' }}>{member.name}</div>
+                    <div style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>{member.position || member.role}</div>
                   </td>
-                  <td>{member.position || member.role}</td>
-                  <td style={{ fontWeight: 'bold' }}>{member.order}</td>
+
+                  {/* Inline Re-Categorization & Re-Ordering Column */}
+                  <td colSpan={2}>
+                    <form 
+                      action={updateTeamMemberOrderAndCategory} 
+                      method="POST" 
+                      style={{ display: 'grid', gridTemplateColumns: '1.2fr 2fr 0.5fr', gap: '1rem', alignItems: 'center', margin: 0 }}
+                    >
+                      <input type="hidden" name="id" value={member.id} />
+                      
+                      {/* Dynamic Category Selector */}
+                      <select 
+                        name="categoryId" 
+                        defaultValue={member.categoryId || "none"}
+                        style={{
+                          padding: '0.4rem 0.6rem',
+                          borderRadius: '4px',
+                          border: '1px solid rgba(255, 255, 255, 0.1)',
+                          background: 'rgba(2, 11, 26, 0.8)',
+                          color: 'white',
+                          fontSize: '0.85rem',
+                          outline: 'none'
+                        }}
+                      >
+                        <option value="none">General / Uncategorized</option>
+                        {categories.map(cat => (
+                          <option key={cat.id} value={cat.id}>{cat.name}</option>
+                        ))}
+                      </select>
+
+                      {/* Slider Input for Order */}
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                        <span style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>Priority:</span>
+                        <input 
+                          type="range" 
+                          name="order" 
+                          min="0" 
+                          max="50" 
+                          defaultValue={member.order} 
+                          style={{ 
+                            flex: 1, 
+                            accentColor: 'var(--color-primary)', 
+                            height: '6px', 
+                            cursor: 'pointer' 
+                          }}
+                        />
+                        <span style={{ fontSize: '0.9rem', fontWeight: 'bold', color: 'var(--color-primary)', minWidth: '15px', textAlign: 'center' }}>
+                          {member.order}
+                        </span>
+                      </div>
+
+                      {/* Save Button */}
+                      <button 
+                        type="submit" 
+                        style={{ 
+                          background: 'rgba(64, 224, 208, 0.15)', 
+                          color: 'var(--color-primary)', 
+                          border: '1px solid rgba(64, 224, 208, 0.3)', 
+                          padding: '0.4rem 0.8rem', 
+                          borderRadius: 'var(--border-radius)', 
+                          cursor: 'pointer',
+                          fontWeight: 600,
+                          fontSize: '0.85rem',
+                          textAlign: 'center'
+                        }}
+                      >
+                        Save
+                      </button>
+                    </form>
+                  </td>
+
+                  {/* Socials Column */}
                   <td>
                     <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
                       {member.linkedinUrl && <a href={member.linkedinUrl} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', textDecoration: 'underline', fontSize: '0.85rem' }}>LinkedIn</a>}
@@ -235,6 +363,8 @@ export default async function AdminTeam() {
                       {!member.linkedinUrl && !member.researchGateUrl && !member.googleScholarUrl && "-"}
                     </div>
                   </td>
+
+                  {/* Delete Column */}
                   <td>
                     <form action={deleteTeamMember.bind(null, member.id)} method="POST">
                       <button 
@@ -252,6 +382,7 @@ export default async function AdminTeam() {
                       </button>
                     </form>
                   </td>
+
                 </tr>
               ))}
             </tbody>
