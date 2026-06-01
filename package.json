@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "postinstall": "prisma generate && prisma db push"
+    "postinstall": "node prisma-setup.js && prisma generate && prisma db push"
   },
   "dependencies": {
     "@prisma/client": "^6.19.3",
