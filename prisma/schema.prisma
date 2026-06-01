@@ -43,19 +43,30 @@ model Publication {
 }
 
 model TeamMember {
-  id          String   @id @default(cuid())
-  name        String
-  role        String
-  email       String?
-  position    String?
+  id               String        @id @default(cuid())
+  name             String
+  role             String
+  email            String?
+  position         String?
   linkedinUrl      String?
   researchGateUrl  String?
   googleScholarUrl String?
   bio              String?
   imageUrl         String?
-  order       Int      @default(0)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  order            Int           @default(0)
+  categoryId       String?
+  category         TeamCategory? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+}
+
+model TeamCategory {
+  id        String       @id @default(cuid())
+  name      String       @unique
+  order     Int          @default(0)
+  members   TeamMember[]
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
 }
 
 model AreaOfInterest {

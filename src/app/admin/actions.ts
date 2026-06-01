@@ -35,9 +35,12 @@ export async function createTeamMember(formData: FormData) {
   const linkedinUrl = formData.get("linkedinUrl") as string;
   const researchGateUrl = formData.get("researchGateUrl") as string;
   const googleScholarUrl = formData.get("googleScholarUrl") as string;
+  const categoryId = formData.get("categoryId") as string;
+  const orderStr = formData.get("order") as string;
   const imageFile = formData.get("image");
 
   let imageUrl = "";
+  const order = orderStr ? parseInt(orderStr, 10) : 0;
 
   // Convert uploaded image to Base64 data URL to bypass Vercel read-only filesystem limitations
   if (imageFile && typeof imageFile === "object" && "size" in imageFile && imageFile.size > 0) {
@@ -64,7 +67,8 @@ export async function createTeamMember(formData: FormData) {
       linkedinUrl: linkedinUrl || null,
       researchGateUrl: researchGateUrl || null,
       googleScholarUrl: googleScholarUrl || null,
-      order: 0,
+      order: isNaN(order) ? 0 : order,
+      categoryId: categoryId && categoryId !== "none" ? categoryId : null,
     }
   });
 
@@ -86,3 +90,47 @@ export async function deleteTeamMember(id: string) {
   revalidatePath("/team");
   revalidatePath("/");
 }
+
+export async function createTeamCategory(formData: FormData) {
+  const name = formData.get("name") as string;
+  const orderStr = formData.get("order") as string;
+  const order = orderStr ? parseInt(orderStr, 10) : 0;
+
+  if (!name || name.trim() === "") {
+    throw new Error("Category name is required");
+  }
+
+  try {
+    await prisma.teamCategory.upsert({
+      where: { name: name.trim() },
+      update: {
+        order: isNaN(order) ? 0 : order,
+      },
+      create: {
+        name: name.trim(),
+        order: isNaN(order) ? 0 : order,
+      }
+    });
+  } catch (err) {
+    console.error("Failed to create or update team category:", err);
+  }
+
+  revalidatePath("/admin/team");
+  revalidatePath("/team");
+  revalidatePath("/");
+}
+
+export async function deleteTeamCategory(id: string) {
+  try {
+    await prisma.teamCategory.delete({
+      where: { id }
+    });
+  } catch (err) {
+    console.error("Failed to delete category:", err);
+  }
+
+  revalidatePath("/admin/team");
+  revalidatePath("/team");
+  revalidatePath("/");
+}
+
