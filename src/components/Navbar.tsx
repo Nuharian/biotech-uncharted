@@ -5,8 +5,21 @@ export default function Navbar() {
   return (
     <header className={styles.header}>
       <div className={`container ${styles.navContainer}`}>
-        <Link href="/" className={styles.logo}>
-          BioTech<span className={styles.logoAccent}>Uncharted</span>
+        <Link href="/" className={styles.logo} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          <img 
+            src="/logo.jpg" 
+            alt="BioTech Uncharted Logo" 
+            style={{ 
+              height: '38px', 
+              borderRadius: '6px', 
+              objectFit: 'contain',
+              border: '1px solid rgba(64, 224, 208, 0.2)',
+              boxShadow: '0 0 10px rgba(64, 224, 208, 0.15)'
+            }} 
+          />
+          <span style={{ display: 'flex', alignItems: 'center' }}>
+            BioTech<span className={styles.logoAccent}>Uncharted</span>
+          </span>
         </Link>
         <nav className={styles.nav}>
           <ul className={styles.navList}>

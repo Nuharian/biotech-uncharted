@@ -46,6 +46,10 @@ model TeamMember {
   id          String   @id @default(cuid())
   name        String
   role        String
+  email       String?
+  position    String?
+  linkedinUrl String?
+  githubUrl   String?
   bio         String
   imageUrl    String?
   order       Int      @default(0)
@@ -70,5 +74,17 @@ model ContactMessage {
   subject   String
   message   String
   isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model Visit {
+  id        String   @id @default(cuid())
+  ip        String
+  userAgent String?
+  path      String
+  referer   String?
+  country   String?
+  city      String?
+  region    String?
   createdAt DateTime @default(now())
 }
