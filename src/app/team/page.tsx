@@ -184,16 +184,20 @@ export default async function TeamPage() {
                           </div>
                         </div>
 
-                        {/* Biography */}
-                        <p style={{ 
-                          color: "var(--color-text-muted)", 
-                          fontSize: "1rem", 
-                          lineHeight: "1.65", 
-                          margin: "0 0 2rem 0",
-                          flexGrow: 1
-                        }}>
-                          {member.bio || "Member of the BioTech Uncharted research team."}
-                        </p>
+                        {/* Skills & Interest */}
+                        <div style={{ margin: "0 0 2rem 0", flexGrow: 1 }}>
+                          <h4 style={{ fontSize: "0.8rem", textTransform: "uppercase", color: "var(--color-primary)", letterSpacing: "0.08em", margin: "0 0 0.5rem 0", fontWeight: 700 }}>
+                            Skills & Interest
+                          </h4>
+                          <p style={{ 
+                            color: "var(--color-text-muted)", 
+                            fontSize: "0.95rem", 
+                            lineHeight: "1.6", 
+                            margin: 0
+                          }}>
+                            {member.bio || "Computational biology, biotech research, molecular modeling."}
+                          </p>
+                        </div>
 
                         <hr style={{ border: "none", borderTop: "1px solid rgba(255, 255, 255, 0.08)", margin: "0 0 1.5rem 0" }} />
 
@@ -382,16 +386,20 @@ export default async function TeamPage() {
                         </div>
                       </div>
 
-                      {/* Biography */}
-                      <p style={{ 
-                        color: "var(--color-text-muted)", 
-                        fontSize: "1rem", 
-                        lineHeight: "1.65", 
-                        margin: "0 0 2rem 0",
-                        flexGrow: 1
-                      }}>
-                        {member.bio || "Member of the BioTech Uncharted research team."}
-                      </p>
+                      {/* Skills & Interest */}
+                      <div style={{ margin: "0 0 2rem 0", flexGrow: 1 }}>
+                        <h4 style={{ fontSize: "0.8rem", textTransform: "uppercase", color: "var(--color-primary)", letterSpacing: "0.08em", margin: "0 0 0.5rem 0", fontWeight: 700 }}>
+                          Skills & Interest
+                        </h4>
+                        <p style={{ 
+                          color: "var(--color-text-muted)", 
+                          fontSize: "0.95rem", 
+                          lineHeight: "1.6", 
+                          margin: 0
+                        }}>
+                          {member.bio || "Computational biology, biotech research, molecular modeling."}
+                        </p>
+                      </div>
 
                       <hr style={{ border: "none", borderTop: "1px solid rgba(255, 255, 255, 0.08)", margin: "0 0 1.5rem 0" }} />
 

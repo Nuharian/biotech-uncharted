@@ -227,8 +227,8 @@ export default async function AdminTeam() {
             </div>
 
             <div className={styles.formGroup}>
-              <label htmlFor="bio">Biography / Description (Optional)</label>
-              <textarea id="bio" name="bio" rows={2} placeholder="Provide a brief background..."></textarea>
+              <label htmlFor="bio">Skills & Interest (Optional)</label>
+              <textarea id="bio" name="bio" rows={2} placeholder="e.g., Genomics, Machine Learning, Computational Biology, Synthetic Biology..."></textarea>
             </div>
 
             <div className={styles.formGroup}>
