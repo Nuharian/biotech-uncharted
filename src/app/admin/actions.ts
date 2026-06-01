@@ -33,28 +33,23 @@ export async function createTeamMember(formData: FormData) {
   const position = formData.get("position") as string;
   const bio = formData.get("bio") as string;
   const linkedinUrl = formData.get("linkedinUrl") as string;
-  const githubUrl = formData.get("githubUrl") as string;
-  const imageFile = formData.get("image") as File | null;
+  const researchGateUrl = formData.get("researchGateUrl") as string;
+  const googleScholarUrl = formData.get("googleScholarUrl") as string;
+  const imageFile = formData.get("image");
 
   let imageUrl = "";
 
-  if (imageFile && imageFile.size > 0) {
+  // Convert uploaded image to Base64 data URL to bypass Vercel read-only filesystem limitations
+  if (imageFile && typeof imageFile === "object" && "size" in imageFile && imageFile.size > 0) {
     try {
-      const bytes = await imageFile.arrayBuffer();
+      const file = imageFile as File;
+      const bytes = await file.arrayBuffer();
       const buffer = Buffer.from(bytes);
-
-      // Ensure public/uploads directory exists
-      const uploadsDir = path.join(process.cwd(), "public", "uploads");
-      await fs.mkdir(uploadsDir, { recursive: true });
-
-      // Generate unique safe filename
-      const safeFilename = `${Date.now()}-${imageFile.name.replace(/[^a-zA-Z0-9.-]/g, "_")}`;
-      const filepath = path.join(uploadsDir, safeFilename);
-      await fs.writeFile(filepath, buffer);
       
-      imageUrl = `/uploads/${safeFilename}`;
+      const base64Data = buffer.toString("base64");
+      imageUrl = `data:${file.type || "image/jpeg"};base64,${base64Data}`;
     } catch (err) {
-      console.error("Failed to save teammate image file:", err);
+      console.error("Failed to convert image to Base64:", err);
     }
   }
 
@@ -64,10 +59,11 @@ export async function createTeamMember(formData: FormData) {
       role: role || position || "Member",
       position: position || role || "Member",
       email: email || null,
-      bio: bio || "",
+      bio: bio || null,
       imageUrl: imageUrl || null,
       linkedinUrl: linkedinUrl || null,
-      githubUrl: githubUrl || null,
+      researchGateUrl: researchGateUrl || null,
+      googleScholarUrl: googleScholarUrl || null,
       order: 0,
     }
   });
@@ -79,13 +75,6 @@ export async function createTeamMember(formData: FormData) {
 
 export async function deleteTeamMember(id: string) {
   try {
-    // Clean up physical image file
-    const member = await prisma.teamMember.findUnique({ where: { id } });
-    if (member?.imageUrl && member.imageUrl.startsWith("/uploads/")) {
-      const filepath = path.join(process.cwd(), "public", member.imageUrl);
-      await fs.unlink(filepath).catch(() => {});
-    }
-
     await prisma.teamMember.delete({
       where: { id }
     });

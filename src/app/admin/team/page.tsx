@@ -39,8 +39,13 @@ export default async function AdminTeam() {
           </div>
 
           <div className={styles.formGroup}>
-            <label htmlFor="githubUrl">GitHub URL</label>
-            <input type="url" id="githubUrl" name="githubUrl" placeholder="https://github.com/..." />
+            <label htmlFor="researchGateUrl">ResearchGate URL</label>
+            <input type="url" id="researchGateUrl" name="researchGateUrl" placeholder="https://researchgate.net/profile/..." />
+          </div>
+
+          <div className={styles.formGroup}>
+            <label htmlFor="googleScholarUrl">Google Scholar URL</label>
+            <input type="url" id="googleScholarUrl" name="googleScholarUrl" placeholder="https://scholar.google.com/citations?..." />
           </div>
         </div>
 
@@ -91,10 +96,11 @@ export default async function AdminTeam() {
                   <td>{member.position || member.role}</td>
                   <td>{member.email || "-"}</td>
                   <td>
-                    <div style={{ display: 'flex', gap: '0.5rem' }}>
+                    <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
                       {member.linkedinUrl && <a href={member.linkedinUrl} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', textDecoration: 'underline', fontSize: '0.85rem' }}>LinkedIn</a>}
-                      {member.githubUrl && <a href={member.githubUrl} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', textDecoration: 'underline', fontSize: '0.85rem' }}>GitHub</a>}
-                      {!member.linkedinUrl && !member.githubUrl && "-"}
+                      {member.researchGateUrl && <a href={member.researchGateUrl} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', textDecoration: 'underline', fontSize: '0.85rem' }}>ResearchGate</a>}
+                      {member.googleScholarUrl && <a href={member.googleScholarUrl} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', textDecoration: 'underline', fontSize: '0.85rem' }}>Scholar</a>}
+                      {!member.linkedinUrl && !member.researchGateUrl && !member.googleScholarUrl && "-"}
                     </div>
                   </td>
                   <td>

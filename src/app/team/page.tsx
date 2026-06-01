@@ -167,7 +167,7 @@ export default async function TeamPage() {
                     <span style={{ fontSize: "0.85rem", color: "rgba(255, 255, 255, 0.2)" }}>No contact email</span>
                   )}
 
-                  <div style={{ display: "flex", gap: "0.8rem" }}>
+                  <div style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
                     {member.linkedinUrl && (
                       <a 
                         href={member.linkedinUrl} 
@@ -182,16 +182,33 @@ export default async function TeamPage() {
                       </a>
                     )}
 
-                    {member.githubUrl && (
+                    {member.researchGateUrl && (
                       <a 
-                        href={member.githubUrl} 
+                        href={member.researchGateUrl} 
                         target="_blank" 
                         rel="noopener noreferrer" 
                         className="teammate-social-link"
-                        title="GitHub"
+                        title="ResearchGate"
+                        style={{ display: "flex", alignItems: "center" }}
                       >
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M19.5 2h-15C3.12 2 2 3.12 2 4.5v15C2 20.88 3.12 22 4.5 22h15c1.38 0 2.5-1.12 2.5-2.5v-15C22 3.12 20.88 2 19.5 2zM9.66 16.7h-1.6v-7.8h1.6v7.8zm4.84-3.41c-.26-.14-.52-.25-.79-.32-.27-.08-.53-.13-.79-.16-.25-.03-.49-.05-.72-.05v-2.28h.74c.26 0 .52.03.77.08c.25.05.47.14.67.26c.2.12.35.29.47.51.11.22.17.48.17.78 0 .34-.07.63-.22.86-.15.23-.37.41-.65.52v.03c.3.09.55.25.75.48c.19.23.29.54.29.93 0 .31-.06.58-.19.82-.12.23-.3.43-.53.58-.23.15-.51.26-.82.32-.32.07-.66.1-1.01.1h-1.92v-2.31h.74c.29 0 .58-.02.85-.07c.28-.05.51-.14.7-.28c.19-.13.33-.31.42-.53c.09-.22.13-.48.13-.77 0-.3-.04-.56-.13-.78c-.09-.21-.24-.38-.43-.5z" />
+                        </svg>
+                      </a>
+                    )}
+
+                    {member.googleScholarUrl && (
+                      <a 
+                        href={member.googleScholarUrl} 
+                        target="_blank" 
+                        rel="noopener noreferrer" 
+                        className="teammate-social-link"
+                        title="Google Scholar"
+                        style={{ display: "flex", alignItems: "center" }}
+                      >
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+                          <path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/>
                         </svg>
                       </a>
                     )}

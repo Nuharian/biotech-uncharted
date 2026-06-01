@@ -48,10 +48,11 @@ model TeamMember {
   role        String
   email       String?
   position    String?
-  linkedinUrl String?
-  githubUrl   String?
-  bio         String?
-  imageUrl    String?
+  linkedinUrl      String?
+  researchGateUrl  String?
+  googleScholarUrl String?
+  bio              String?
+  imageUrl         String?
   order       Int      @default(0)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
