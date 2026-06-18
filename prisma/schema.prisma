@@ -53,6 +53,7 @@ model TeamMember {
   googleScholarUrl String?
   bio              String?
   imageUrl         String?
+  isHighlighted    Boolean       @default(false)
   order            Int           @default(0)
   categoryId       String?
   category         TeamCategory? @relation(fields: [categoryId], references: [id], onDelete: SetNull)

@@ -1,11 +1,11 @@
 import { prisma } from "@/lib/prisma";
 import styles from "../admin.module.css";
-import { 
-  createTeamMember, 
-  deleteTeamMember, 
-  createTeamCategory, 
+import {
+  createTeamMember,
+  deleteTeamMember,
+  createTeamCategory,
   deleteTeamCategory,
-  updateTeamMemberOrderAndCategory,
+  updateTeamMember,
   updateTeamCategoryNameAndOrder
 } from "../actions";
 
@@ -227,13 +227,38 @@ export default async function AdminTeam() {
             </div>
 
             <div className={styles.formGroup}>
-              <label htmlFor="bio">Skills & Interest (Optional)</label>
+              <label htmlFor="bio">Skills & Interest (comma-separated)</label>
               <textarea id="bio" name="bio" rows={2} placeholder="e.g., Genomics, Machine Learning, Computational Biology, Synthetic Biology..."></textarea>
+              <small style={{ color: 'var(--color-text-muted)', fontSize: '0.75rem' }}>
+                Separate each skill with a comma — they appear as individual coloured tags on the team page.
+              </small>
             </div>
 
-            <div className={styles.formGroup}>
-              <label htmlFor="image">Profile Image Upload</label>
-              <input type="file" id="image" name="image" accept="image/*" style={{ border: 'none', background: 'transparent', padding: '0.25rem 0' }} />
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+              <div className={styles.formGroup}>
+                <label htmlFor="isHighlighted">Highlight / Feature this member?</label>
+                <select
+                  id="isHighlighted"
+                  name="isHighlighted"
+                  defaultValue="no"
+                  style={{
+                    padding: '0.75rem',
+                    borderRadius: 'var(--border-radius)',
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                    background: 'rgba(2, 11, 26, 0.9)',
+                    color: 'white',
+                    outline: 'none'
+                  }}
+                >
+                  <option value="no">No — standard card</option>
+                  <option value="yes">Yes — featured / highlighted</option>
+                </select>
+              </div>
+
+              <div className={styles.formGroup}>
+                <label htmlFor="image">Profile Image Upload</label>
+                <input type="file" id="image" name="image" accept="image/*" style={{ border: 'none', background: 'transparent', padding: '0.25rem 0' }} />
+              </div>
             </div>
 
             <button type="submit" className="btn btn-primary" style={{ marginTop: '0.5rem' }}>
@@ -244,149 +269,185 @@ export default async function AdminTeam() {
 
       </div>
 
-      {/* Teammates List & Live Drag-Order Editors */}
+      {/* Teammates List & Full Detail Editors */}
       <div style={{ marginTop: '4rem' }}>
-        <h3 style={{ marginBottom: '1.5rem' }}>Current Teammates (Adjust Category & Order directly)</h3>
+        <h3 style={{ marginBottom: '0.5rem' }}>Current Teammates</h3>
+        <p style={{ color: 'var(--color-text-muted)', marginBottom: '1.5rem', fontSize: '0.9rem' }}>
+          Click <strong>Edit full details</strong> on any member to change every field — name, position, contacts,
+          socials, skills, photo, category, ordering and highlight status.
+        </p>
         {team.length > 0 ? (
-          <table className={styles.table}>
-            <thead>
-              <tr>
-                <th>Image</th>
-                <th>Name / Position</th>
-                <th>Category Assignment</th>
-                <th>Sorting Order (Slide to Reorder)</th>
-                <th>Socials</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {team.map(member => (
-                <tr key={member.id}>
-                  
-                  {/* Image Column */}
-                  <td>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            {team.map(member => (
+              <div
+                key={member.id}
+                style={{
+                  background: 'var(--color-surface-light)',
+                  borderRadius: 'var(--border-radius)',
+                  border: member.isHighlighted
+                    ? '1px solid rgba(255, 196, 64, 0.45)'
+                    : '1px solid rgba(64, 224, 208, 0.15)',
+                  overflow: 'hidden'
+                }}
+              >
+                <details>
+                  {/* Summary row */}
+                  <summary
+                    style={{
+                      listStyle: 'none',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '1rem',
+                      padding: '1rem 1.25rem'
+                    }}
+                  >
                     {member.imageUrl ? (
-                      <img 
-                        src={member.imageUrl} 
-                        alt={member.name} 
-                        style={{ width: '45px', height: '45px', borderRadius: '50%', objectFit: 'cover', border: '1px solid var(--color-primary)' }} 
+                      <img
+                        src={member.imageUrl}
+                        alt={member.name}
+                        style={{ width: '45px', height: '45px', borderRadius: '50%', objectFit: 'cover', border: '1px solid var(--color-primary)' }}
                       />
                     ) : (
-                      <div style={{ width: '45px', height: '45px', borderRadius: '50%', background: 'rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', color: 'var(--color-primary)' }}>
+                      <div style={{ width: '45px', height: '45px', borderRadius: '50%', background: 'rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', color: 'var(--color-primary)', flexShrink: 0 }}>
                         {member.name.substring(0, 2).toUpperCase()}
                       </div>
                     )}
-                  </td>
 
-                  {/* Name & Position Column */}
-                  <td>
-                    <div style={{ fontWeight: 'bold', color: '#ffffff' }}>{member.name}</div>
-                    <div style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>{member.position || member.role}</div>
-                  </td>
-
-                  {/* Inline Re-Categorization & Re-Ordering Column */}
-                  <td colSpan={2}>
-                    <form 
-                      action={updateTeamMemberOrderAndCategory} 
-                      method="POST" 
-                      style={{ display: 'grid', gridTemplateColumns: '1.2fr 2fr 0.5fr', gap: '1rem', alignItems: 'center', margin: 0 }}
-                    >
-                      <input type="hidden" name="id" value={member.id} />
-                      
-                      {/* Dynamic Category Selector */}
-                      <select 
-                        name="categoryId" 
-                        defaultValue={member.categoryId || "none"}
-                        style={{
-                          padding: '0.4rem 0.6rem',
-                          borderRadius: '4px',
-                          border: '1px solid rgba(255, 255, 255, 0.1)',
-                          background: 'rgba(2, 11, 26, 0.8)',
-                          color: 'white',
-                          fontSize: '0.85rem',
-                          outline: 'none'
-                        }}
-                      >
-                        <option value="none">General / Uncategorized</option>
-                        {categories.map(cat => (
-                          <option key={cat.id} value={cat.id}>{cat.name}</option>
-                        ))}
-                      </select>
-
-                      {/* Slider Input for Order */}
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                        <span style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>Priority:</span>
-                        <input 
-                          type="range" 
-                          name="order" 
-                          min="0" 
-                          max="50" 
-                          defaultValue={member.order} 
-                          style={{ 
-                            flex: 1, 
-                            accentColor: 'var(--color-primary)', 
-                            height: '6px', 
-                            cursor: 'pointer' 
-                          }}
-                        />
-                        <span style={{ fontSize: '0.9rem', fontWeight: 'bold', color: 'var(--color-primary)', minWidth: '15px', textAlign: 'center' }}>
-                          {member.order}
-                        </span>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ fontWeight: 'bold', color: '#ffffff', display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+                        {member.name}
+                        {member.isHighlighted && (
+                          <span style={{ fontSize: '0.65rem', fontWeight: 700, letterSpacing: '0.05em', textTransform: 'uppercase', color: '#ffc440', background: 'rgba(255, 196, 64, 0.12)', border: '1px solid rgba(255, 196, 64, 0.4)', padding: '0.1rem 0.5rem', borderRadius: '999px' }}>
+                            ★ Featured
+                          </span>
+                        )}
                       </div>
-
-                      {/* Save Button */}
-                      <button 
-                        type="submit" 
-                        style={{ 
-                          background: 'rgba(64, 224, 208, 0.15)', 
-                          color: 'var(--color-primary)', 
-                          border: '1px solid rgba(64, 224, 208, 0.3)', 
-                          padding: '0.4rem 0.8rem', 
-                          borderRadius: 'var(--border-radius)', 
-                          cursor: 'pointer',
-                          fontWeight: 600,
-                          fontSize: '0.85rem',
-                          textAlign: 'center'
-                        }}
-                      >
-                        Save
-                      </button>
-                    </form>
-                  </td>
-
-                  {/* Socials Column */}
-                  <td>
-                    <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-                      {member.linkedinUrl && <a href={member.linkedinUrl} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', textDecoration: 'underline', fontSize: '0.85rem' }}>LinkedIn</a>}
-                      {member.researchGateUrl && <a href={member.researchGateUrl} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', textDecoration: 'underline', fontSize: '0.85rem' }}>ResearchGate</a>}
-                      {member.googleScholarUrl && <a href={member.googleScholarUrl} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', textDecoration: 'underline', fontSize: '0.85rem' }}>Scholar</a>}
-                      {!member.linkedinUrl && !member.researchGateUrl && !member.googleScholarUrl && "-"}
+                      <div style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>
+                        {member.position || member.role}
+                        {member.category ? ` · ${member.category.name}` : ' · Uncategorized'}
+                        {` · Order ${member.order}`}
+                      </div>
                     </div>
-                  </td>
 
-                  {/* Delete Column */}
-                  <td>
-                    <form action={deleteTeamMember.bind(null, member.id)} method="POST">
-                      <button 
-                        type="submit" 
-                        style={{ 
-                          background: 'rgba(255, 68, 68, 0.1)', 
-                          color: '#ff4444', 
-                          border: '1px solid rgba(255, 68, 68, 0.2)', 
-                          padding: '0.4rem 0.8rem', 
-                          borderRadius: 'var(--border-radius)', 
-                          cursor: 'pointer' 
-                        }}
-                      >
-                        Delete
+                    <span style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--color-primary)', whiteSpace: 'nowrap' }}>
+                      Edit full details ▾
+                    </span>
+                  </summary>
+
+                  {/* Full edit form */}
+                  <form
+                    action={updateTeamMember}
+                    method="POST"
+                    encType="multipart/form-data"
+                    className={styles.form}
+                    style={{ marginTop: 0, padding: '0 1.25rem 1.5rem', background: 'transparent', borderTop: '1px solid rgba(255,255,255,0.05)' }}
+                  >
+                    <input type="hidden" name="id" value={member.id} />
+
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginTop: '1.25rem' }}>
+                      <div className={styles.formGroup}>
+                        <label>Full Name</label>
+                        <input type="text" name="name" required defaultValue={member.name} />
+                      </div>
+                      <div className={styles.formGroup}>
+                        <label>Position / Role</label>
+                        <input type="text" name="position" defaultValue={member.position || member.role} />
+                      </div>
+                    </div>
+
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                      <div className={styles.formGroup}>
+                        <label>Team Category</label>
+                        <select
+                          name="categoryId"
+                          defaultValue={member.categoryId || "none"}
+                          style={{ padding: '0.75rem', borderRadius: 'var(--border-radius)', border: '1px solid rgba(255, 255, 255, 0.1)', background: 'rgba(2, 11, 26, 0.9)', color: 'white', outline: 'none' }}
+                        >
+                          <option value="none">General / No Category</option>
+                          {categories.map(cat => (
+                            <option key={cat.id} value={cat.id}>{cat.name}</option>
+                          ))}
+                        </select>
+                      </div>
+                      <div className={styles.formGroup}>
+                        <label>Sorting Order</label>
+                        <input type="number" name="order" min="0" defaultValue={member.order} />
+                      </div>
+                    </div>
+
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                      <div className={styles.formGroup}>
+                        <label>Email Address</label>
+                        <input type="email" name="email" defaultValue={member.email || ""} placeholder="name@biotech.org" />
+                      </div>
+                      <div className={styles.formGroup}>
+                        <label>LinkedIn URL</label>
+                        <input type="url" name="linkedinUrl" defaultValue={member.linkedinUrl || ""} placeholder="https://linkedin.com/in/..." />
+                      </div>
+                    </div>
+
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                      <div className={styles.formGroup}>
+                        <label>ResearchGate URL</label>
+                        <input type="url" name="researchGateUrl" defaultValue={member.researchGateUrl || ""} placeholder="https://researchgate.net/profile/..." />
+                      </div>
+                      <div className={styles.formGroup}>
+                        <label>Google Scholar URL</label>
+                        <input type="url" name="googleScholarUrl" defaultValue={member.googleScholarUrl || ""} placeholder="https://scholar.google.com/citations?..." />
+                      </div>
+                    </div>
+
+                    <div className={styles.formGroup}>
+                      <label>Skills & Interest (comma-separated)</label>
+                      <textarea name="bio" rows={2} defaultValue={member.bio || ""} placeholder="e.g., Genomics, Machine Learning, Computational Biology"></textarea>
+                      <small style={{ color: 'var(--color-text-muted)', fontSize: '0.75rem' }}>
+                        Separate each skill with a comma — they appear as individual coloured tags on the team page.
+                      </small>
+                    </div>
+
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                      <div className={styles.formGroup}>
+                        <label>Highlight / Feature this member?</label>
+                        <select
+                          name="isHighlighted"
+                          defaultValue={member.isHighlighted ? "yes" : "no"}
+                          style={{ padding: '0.75rem', borderRadius: 'var(--border-radius)', border: '1px solid rgba(255, 255, 255, 0.1)', background: 'rgba(2, 11, 26, 0.9)', color: 'white', outline: 'none' }}
+                        >
+                          <option value="no">No — standard card</option>
+                          <option value="yes">Yes — featured / highlighted</option>
+                        </select>
+                      </div>
+                      <div className={styles.formGroup}>
+                        <label>Replace Profile Image</label>
+                        <input type="file" name="image" accept="image/*" style={{ border: 'none', background: 'transparent', padding: '0.25rem 0' }} />
+                        {member.imageUrl && (
+                          <label style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.8rem', color: 'var(--color-text-muted)', marginTop: '0.25rem' }}>
+                            <input type="checkbox" name="removeImage" value="yes" style={{ width: 'auto' }} />
+                            Remove current photo
+                          </label>
+                        )}
+                      </div>
+                    </div>
+
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.5rem', marginTop: '0.5rem' }}>
+                      <button type="submit" className="btn btn-primary">
+                        Save Changes
                       </button>
-                    </form>
-                  </td>
 
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                      <button
+                        formAction={deleteTeamMember.bind(null, member.id)}
+                        type="submit"
+                        style={{ background: 'rgba(255, 68, 68, 0.1)', color: '#ff4444', border: '1px solid rgba(255, 68, 68, 0.2)', padding: '0.6rem 1rem', borderRadius: 'var(--border-radius)', cursor: 'pointer', fontWeight: 600 }}
+                      >
+                        Delete Member
+                      </button>
+                    </div>
+                  </form>
+                </details>
+              </div>
+            ))}
+          </div>
         ) : (
           <p style={{ color: 'var(--color-text-muted)', marginTop: '1rem' }}>No teammates added yet.</p>
         )}
