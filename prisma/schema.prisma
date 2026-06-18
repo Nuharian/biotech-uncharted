@@ -52,6 +52,7 @@ model TeamMember {
   researchGateUrl  String?
   googleScholarUrl String?
   bio              String?
+  peerReviews      String?
   imageUrl         String?
   isHighlighted    Boolean       @default(false)
   order            Int           @default(0)

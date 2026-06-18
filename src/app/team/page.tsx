@@ -173,6 +173,13 @@ export default async function TeamPage() {
           0%, 100% { box-shadow: 0 0 0 1px rgba(255, 196, 64, 0.2), 0 10px 30px rgba(255, 196, 64, 0.1); }
           50% { box-shadow: 0 0 0 1px rgba(255, 196, 64, 0.4), 0 14px 40px rgba(255, 196, 64, 0.2); }
         }
+        .member-name--featured {
+          animation: nameGlow 3s ease-in-out infinite;
+        }
+        @keyframes nameGlow {
+          0%, 100% { filter: drop-shadow(0 0 10px rgba(255, 196, 64, 0.45)); }
+          50% { filter: drop-shadow(0 0 18px rgba(255, 196, 64, 0.75)); }
+        }
         .teammate-social-link {
           color: var(--color-text-muted);
           transition: all 0.25s ease;

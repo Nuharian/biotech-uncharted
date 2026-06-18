@@ -35,6 +35,7 @@ export async function createTeamMember(formData: FormData) {
   const linkedinUrl = formData.get("linkedinUrl") as string;
   const researchGateUrl = formData.get("researchGateUrl") as string;
   const googleScholarUrl = formData.get("googleScholarUrl") as string;
+  const peerReviews = formData.get("peerReviews") as string;
   const categoryId = formData.get("categoryId") as string;
   const orderStr = formData.get("order") as string;
   const imageFile = formData.get("image");
@@ -53,6 +54,7 @@ export async function createTeamMember(formData: FormData) {
       position: position || role || "Member",
       email: email || null,
       bio: bio || null,
+      peerReviews: peerReviews || null,
       imageUrl: imageUrl || null,
       linkedinUrl: linkedinUrl || null,
       researchGateUrl: researchGateUrl || null,
@@ -99,6 +101,7 @@ export async function updateTeamMember(formData: FormData) {
   const linkedinUrl = formData.get("linkedinUrl") as string;
   const researchGateUrl = formData.get("researchGateUrl") as string;
   const googleScholarUrl = formData.get("googleScholarUrl") as string;
+  const peerReviews = formData.get("peerReviews") as string;
   const categoryId = formData.get("categoryId") as string;
   const orderStr = formData.get("order") as string;
   const imageFile = formData.get("image");
@@ -125,6 +128,7 @@ export async function updateTeamMember(formData: FormData) {
         role: position || name || "Member",
         email: email || null,
         bio: bio || null,
+        peerReviews: peerReviews || null,
         linkedinUrl: linkedinUrl || null,
         researchGateUrl: researchGateUrl || null,
         googleScholarUrl: googleScholarUrl || null,
