@@ -258,4 +258,156 @@ export async function updateTeamCategoryNameAndOrder(formData: FormData) {
   revalidatePath("/");
 }
 
+/* ----------------------------- Publications ----------------------------- */
 
+export async function createPublication(formData: FormData) {
+  const title = formData.get("title") as string;
+  const authors = formData.get("authors") as string;
+  const journal = formData.get("journal") as string;
+  const abstract = formData.get("abstract") as string;
+  const link = formData.get("link") as string;
+  const publishDateStr = formData.get("publishDate") as string;
+  const isHighlighted = formData.get("isHighlighted") === "yes";
+
+  const publishDate = publishDateStr ? new Date(publishDateStr) : new Date();
+
+  await prisma.publication.create({
+    data: {
+      title,
+      authors,
+      journal,
+      abstract,
+      link: link || null,
+      isHighlighted,
+      publishDate: isNaN(publishDate.getTime()) ? new Date() : publishDate,
+    }
+  });
+
+  revalidatePath("/admin/publications");
+  revalidatePath("/publications");
+  revalidatePath("/");
+}
+
+export async function updatePublication(formData: FormData) {
+  const id = formData.get("id") as string;
+  if (!id) throw new Error("Publication ID is required");
+
+  const title = formData.get("title") as string;
+  const authors = formData.get("authors") as string;
+  const journal = formData.get("journal") as string;
+  const abstract = formData.get("abstract") as string;
+  const link = formData.get("link") as string;
+  const publishDateStr = formData.get("publishDate") as string;
+  const isHighlighted = formData.get("isHighlighted") === "yes";
+
+  const publishDate = publishDateStr ? new Date(publishDateStr) : null;
+
+  try {
+    await prisma.publication.update({
+      where: { id },
+      data: {
+        title: title || undefined,
+        authors: authors || undefined,
+        journal: journal || undefined,
+        abstract: abstract || undefined,
+        link: link || null,
+        isHighlighted,
+        ...(publishDate && !isNaN(publishDate.getTime()) ? { publishDate } : {}),
+      }
+    });
+  } catch (err) {
+    console.error("Failed to update publication:", err);
+  }
+
+  revalidatePath("/admin/publications");
+  revalidatePath("/publications");
+  revalidatePath("/");
+}
+
+export async function deletePublication(id: string) {
+  try {
+    await prisma.publication.delete({ where: { id } });
+  } catch (err) {
+    console.error("Failed to delete publication:", err);
+  }
+
+  revalidatePath("/admin/publications");
+  revalidatePath("/publications");
+  revalidatePath("/");
+}
+
+/* -------------------------- Areas of Interest --------------------------- */
+
+export async function createAreaOfInterest(formData: FormData) {
+  const title = formData.get("title") as string;
+  const description = formData.get("description") as string;
+  const orderStr = formData.get("order") as string;
+  const imageFile = formData.get("image");
+
+  const order = orderStr ? parseInt(orderStr, 10) : 0;
+  const imageUrl = await fileToDataUrl(imageFile);
+
+  await prisma.areaOfInterest.create({
+    data: {
+      title,
+      description,
+      imageUrl: imageUrl || null,
+      order: isNaN(order) ? 0 : order,
+    }
+  });
+
+  revalidatePath("/admin/areas");
+  revalidatePath("/areas-of-interest");
+  revalidatePath("/");
+}
+
+export async function updateAreaOfInterest(formData: FormData) {
+  const id = formData.get("id") as string;
+  if (!id) throw new Error("Area ID is required");
+
+  const title = formData.get("title") as string;
+  const description = formData.get("description") as string;
+  const orderStr = formData.get("order") as string;
+  const imageFile = formData.get("image");
+  const removeImage = formData.get("removeImage") === "yes";
+
+  const order = orderStr ? parseInt(orderStr, 10) : 0;
+
+  const newImageUrl = await fileToDataUrl(imageFile);
+  let imageUrl: string | null | undefined = undefined;
+  if (newImageUrl) {
+    imageUrl = newImageUrl;
+  } else if (removeImage) {
+    imageUrl = null;
+  }
+
+  try {
+    await prisma.areaOfInterest.update({
+      where: { id },
+      data: {
+        title: title || undefined,
+        description: description || undefined,
+        order: isNaN(order) ? 0 : order,
+        ...(imageUrl !== undefined ? { imageUrl } : {}),
+      }
+    });
+  } catch (err) {
+    console.error("Failed to update area of interest:", err);
+  }
+
+  revalidatePath("/admin/areas");
+  revalidatePath("/areas-of-interest");
+  revalidatePath("/");
+}
+
+export async function deleteAreaOfInterest(id: string) {
+  try {
+    await prisma.areaOfInterest.delete({ where: { id } });
+  } catch (err) {
+    console.error("Failed to delete area of interest:", err);
+  }
+
+  revalidatePath("/admin/areas");
+  revalidatePath("/areas-of-interest");
+  revalidatePath("/");
+}
