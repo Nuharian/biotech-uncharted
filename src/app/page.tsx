@@ -17,6 +17,11 @@ export default async function Home() {
     take: 3
   });
 
+  const areas = await prisma.areaOfInterest.findMany({
+    orderBy: { order: 'asc' },
+    take: 4
+  });
+
   return (
     <div className={styles.homeContainer}>
       <section className={`${styles.hero} animate-fade-in`}>
@@ -26,7 +31,7 @@ export default async function Home() {
             <p className={styles.heroSubtitle}>Explore the cutting-edge research and unearth the mysteries of biological science with our latest publications and insights.</p>
             <div className={styles.heroActions}>
               <Link href="/publications" className="btn btn-primary">Read Publications</Link>
-              <Link href="/news" className="btn btn-outline">Latest News</Link>
+              <Link href="/team" className="btn btn-outline">Meet the Team</Link>
             </div>
           </div>
           <div style={{ flex: '0.8', minWidth: '300px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
@@ -73,6 +78,24 @@ export default async function Home() {
           )) : <p>No featured publications yet.</p>}
         </div>
       </section>
+
+      {areas.length > 0 && (
+        <section className="section container">
+          <h2 className={styles.sectionTitle}>Our Research <span className={styles.textAccent}>Areas</span></h2>
+          <div className={styles.grid}>
+            {areas.map(area => (
+              <Link key={area.id} href="/areas-of-interest" className="glass-card" style={{ display: 'block' }}>
+                <h3>{area.title}</h3>
+                <p>{area.description.length > 130 ? `${area.description.substring(0, 130)}...` : area.description}</p>
+                <span className={styles.readMore}>Explore &rarr;</span>
+              </Link>
+            ))}
+          </div>
+          <div style={{ textAlign: 'center', marginTop: '2.5rem' }}>
+            <Link href="/areas-of-interest" className="btn btn-outline">View All Areas of Interest</Link>
+          </div>
+        </section>
+      )}
     </div>
   );
 }

@@ -1,6 +1,7 @@
 "use server";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { promises as fs } from "fs";
 import path from "path";
 
@@ -410,4 +411,52 @@ export async function deleteAreaOfInterest(id: string) {
   revalidatePath("/admin/areas");
   revalidatePath("/areas-of-interest");
   revalidatePath("/");
+}
+
+/* --------------------------- Contact Messages --------------------------- */
+
+export async function createContactMessage(formData: FormData) {
+  const name = (formData.get("name") as string)?.trim();
+  const email = (formData.get("email") as string)?.trim();
+  const subject = ((formData.get("subject") as string) || "").trim();
+  const message = (formData.get("message") as string)?.trim();
+
+  if (!name || !email || !message) {
+    redirect("/contact?error=1");
+  }
+
+  try {
+    await prisma.contactMessage.create({
+      data: {
+        name,
+        email,
+        subject: subject || "(no subject)",
+        message,
+      }
+    });
+  } catch (err) {
+    console.error("Failed to save contact message:", err);
+    redirect("/contact?error=1");
+  }
+
+  revalidatePath("/admin/messages");
+  redirect("/contact?sent=1");
+}
+
+export async function markMessageRead(id: string) {
+  try {
+    await prisma.contactMessage.update({ where: { id }, data: { isRead: true } });
+  } catch (err) {
+    console.error("Failed to mark message read:", err);
+  }
+  revalidatePath("/admin/messages");
+}
+
+export async function deleteContactMessage(id: string) {
+  try {
+    await prisma.contactMessage.delete({ where: { id } });
+  } catch (err) {
+    console.error("Failed to delete message:", err);
+  }
+  revalidatePath("/admin/messages");
 }
