@@ -11,8 +11,18 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "BioTech Uncharted",
-  description: "Exploring the latest in biotech research and innovations.",
+  title: {
+    default: "BioTech Uncharted — Pioneering the Future of Biotech",
+    template: "%s | BioTech Uncharted",
+  },
+  description:
+    "BioTech Uncharted explores the frontiers of biological science and AI-driven biotechnology — research, publications, and discoveries from our team.",
+  keywords: ["biotech", "biotechnology", "computational biology", "research", "publications", "synthetic biology"],
+  openGraph: {
+    title: "BioTech Uncharted",
+    description: "Pioneering the future of biotech — research, publications, and discoveries.",
+    type: "website",
+  },
 };
 
 export default async function RootLayout({

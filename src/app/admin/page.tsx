@@ -7,6 +7,8 @@ export default async function AdminDashboard() {
   const newsCount = await prisma.news.count();
   const pubCount = await prisma.publication.count();
   const teamCount = await prisma.teamMember.count();
+  const areaCount = await prisma.areaOfInterest.count();
+  const unreadCount = await prisma.contactMessage.count({ where: { isRead: false } });
 
   return (
     <div>
@@ -25,6 +27,14 @@ export default async function AdminDashboard() {
         <div className={styles.statCard}>
           <h3>Team Members</h3>
           <p>{teamCount}</p>
+        </div>
+        <div className={styles.statCard}>
+          <h3>Areas of Interest</h3>
+          <p>{areaCount}</p>
+        </div>
+        <div className={styles.statCard}>
+          <h3>Unread Messages</h3>
+          <p>{unreadCount}</p>
         </div>
       </div>
     </div>
