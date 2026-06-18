@@ -188,21 +188,21 @@ export default function TeamMemberCard({ member }: { member: TeamMember }) {
         </div>
       </div>
 
-      {/* Skills & Interest as coloured tags */}
-      <div style={{ margin: "0 0 2rem 0", flexGrow: 1 }}>
-        <h4
-          style={{
-            fontSize: "0.8rem",
-            textTransform: "uppercase",
-            color: featured ? "#ffc440" : "var(--color-primary)",
-            letterSpacing: "0.08em",
-            margin: "0 0 0.85rem 0",
-            fontWeight: 700,
-          }}
-        >
-          Skills &amp; Interest
-        </h4>
-        {skills.length > 0 ? (
+      {/* Skills & Interest as coloured tags (only shown when the member has skills) */}
+      {skills.length > 0 && (
+        <div style={{ margin: "0 0 2rem 0" }}>
+          <h4
+            style={{
+              fontSize: "0.8rem",
+              textTransform: "uppercase",
+              color: featured ? "#ffc440" : "var(--color-primary)",
+              letterSpacing: "0.08em",
+              margin: "0 0 0.85rem 0",
+              fontWeight: 700,
+            }}
+          >
+            Skills &amp; Interest
+          </h4>
           <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
             {skills.map((skill, i) => {
               const c = colorForSkill(skill);
@@ -218,7 +218,6 @@ export default function TeamMemberCard({ member }: { member: TeamMember }) {
                     padding: "0.3rem 0.7rem",
                     borderRadius: "999px",
                     lineHeight: 1.3,
-                    whiteSpace: "nowrap",
                   }}
                 >
                   {skill}
@@ -226,12 +225,8 @@ export default function TeamMemberCard({ member }: { member: TeamMember }) {
               );
             })}
           </div>
-        ) : (
-          <p style={{ color: "var(--color-text-muted)", fontSize: "0.95rem", lineHeight: "1.6", margin: 0 }}>
-            Computational biology, biotech research, molecular modeling.
-          </p>
-        )}
-      </div>
+        </div>
+      )}
 
       {/* Peer Review Recognition */}
       {peerReviews.length > 0 && (
@@ -305,6 +300,9 @@ export default function TeamMemberCard({ member }: { member: TeamMember }) {
           </div>
         </div>
       )}
+
+      {/* Spacer keeps the contact footer pinned to the bottom of every card */}
+      <div style={{ flexGrow: 1, minHeight: "0.5rem" }} />
 
       <hr style={{ border: "none", borderTop: "1px solid rgba(255, 255, 255, 0.08)", margin: "0 0 1.5rem 0" }} />
 
