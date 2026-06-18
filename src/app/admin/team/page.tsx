@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import styles from "../admin.module.css";
+import SkillsInput from "@/components/SkillsInput";
 import {
   createTeamMember,
   deleteTeamMember,
@@ -227,10 +228,15 @@ export default async function AdminTeam() {
             </div>
 
             <div className={styles.formGroup}>
-              <label htmlFor="bio">Skills & Interest (comma-separated)</label>
-              <textarea id="bio" name="bio" rows={2} placeholder="e.g., Genomics, Machine Learning, Computational Biology, Synthetic Biology..."></textarea>
+              <label>Skills & Interest</label>
+              <SkillsInput name="bio" />
+            </div>
+
+            <div className={styles.formGroup}>
+              <label htmlFor="peerReviews">Peer Review Recognition (one per line)</label>
+              <textarea id="peerReviews" name="peerReviews" rows={3} placeholder={"Plant Physiology and Biochemistry (Elsevier) | Reviewer, June 2026\nJournal of Medical Research and Reviews | Reviewer, 2026"}></textarea>
               <small style={{ color: 'var(--color-text-muted)', fontSize: '0.75rem' }}>
-                Separate each skill with a comma — they appear as individual coloured tags on the team page.
+                One credential per line. Use <strong>Journal name | role / period</strong> — each appears as a verified reviewer badge.
               </small>
             </div>
 
@@ -399,10 +405,15 @@ export default async function AdminTeam() {
                     </div>
 
                     <div className={styles.formGroup}>
-                      <label>Skills & Interest (comma-separated)</label>
-                      <textarea name="bio" rows={2} defaultValue={member.bio || ""} placeholder="e.g., Genomics, Machine Learning, Computational Biology"></textarea>
+                      <label>Skills & Interest</label>
+                      <SkillsInput name="bio" defaultValue={member.bio || ""} />
+                    </div>
+
+                    <div className={styles.formGroup}>
+                      <label>Peer Review Recognition (one per line)</label>
+                      <textarea name="peerReviews" rows={3} defaultValue={member.peerReviews || ""} placeholder={"Plant Physiology and Biochemistry (Elsevier) | Reviewer, June 2026\nJournal of Medical Research and Reviews | Reviewer, 2026"}></textarea>
                       <small style={{ color: 'var(--color-text-muted)', fontSize: '0.75rem' }}>
-                        Separate each skill with a comma — they appear as individual coloured tags on the team page.
+                        One credential per line. Use <strong>Journal name | role / period</strong> — each appears as a verified reviewer badge.
                       </small>
                     </div>
 

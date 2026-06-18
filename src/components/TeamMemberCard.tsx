@@ -37,6 +37,16 @@ export default function TeamMemberCard({ member }: { member: TeamMember }) {
     .map((s) => s.trim())
     .filter(Boolean);
 
+  // Peer-review credentials: one per line, "Journal name | role / period".
+  const peerReviews = (member.peerReviews || "")
+    .split("\n")
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .map((line) => {
+      const [journal, ...rest] = line.split("|");
+      return { journal: journal.trim(), detail: rest.join("|").trim() };
+    });
+
   return (
     <div
       className={`glass-card team-card${featured ? " team-card--featured" : ""}`}
@@ -139,7 +149,26 @@ export default function TeamMemberCard({ member }: { member: TeamMember }) {
         )}
 
         <div style={{ flex: 1 }}>
-          <h3 style={{ fontSize: "1.5rem", fontWeight: 800, margin: 0, color: "#ffffff", lineHeight: 1.2 }}>
+          <h3
+            className={featured ? "member-name--featured" : undefined}
+            style={
+              featured
+                ? {
+                    fontSize: "1.7rem",
+                    fontWeight: 900,
+                    margin: 0,
+                    lineHeight: 1.15,
+                    letterSpacing: "0.01em",
+                    background: "linear-gradient(100deg, #ffffff 0%, #ffe9a8 45%, #ffc440 100%)",
+                    WebkitBackgroundClip: "text",
+                    backgroundClip: "text",
+                    WebkitTextFillColor: "transparent",
+                    color: "#ffc440",
+                    filter: "drop-shadow(0 0 14px rgba(255, 196, 64, 0.55))",
+                  }
+                : { fontSize: "1.5rem", fontWeight: 800, margin: 0, color: "#ffffff", lineHeight: 1.2 }
+            }
+          >
             {member.name}
           </h3>
           <p
@@ -203,6 +232,79 @@ export default function TeamMemberCard({ member }: { member: TeamMember }) {
           </p>
         )}
       </div>
+
+      {/* Peer Review Recognition */}
+      {peerReviews.length > 0 && (
+        <div
+          style={{
+            margin: "0 0 1.75rem 0",
+            padding: "1rem 1.1rem",
+            borderRadius: "14px",
+            background: featured
+              ? "linear-gradient(135deg, rgba(255, 196, 64, 0.08) 0%, rgba(255, 196, 64, 0.03) 100%)"
+              : "rgba(64, 224, 208, 0.05)",
+            border: featured ? "1px solid rgba(255, 196, 64, 0.3)" : "1px solid rgba(64, 224, 208, 0.18)",
+          }}
+        >
+          <h4
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "0.45rem",
+              fontSize: "0.8rem",
+              textTransform: "uppercase",
+              color: featured ? "#ffc440" : "var(--color-primary)",
+              letterSpacing: "0.08em",
+              margin: "0 0 0.85rem 0",
+              fontWeight: 800,
+            }}
+          >
+            {/* Seal / award icon */}
+            <svg width="16" height="16" viewBox="0 0 24 24" {...ICON_PROPS} aria-hidden>
+              <circle cx="12" cy="8" r="6" />
+              <path d="M8.21 13.89 7 22l5-3 5 3-1.21-8.12" />
+            </svg>
+            Peer Review Recognition
+          </h4>
+
+          <div style={{ display: "flex", flexDirection: "column", gap: "0.7rem" }}>
+            {peerReviews.map((pr, i) => (
+              <div key={`${pr.journal}-${i}`} style={{ display: "flex", alignItems: "flex-start", gap: "0.6rem" }}>
+                {/* Verified check badge */}
+                <span
+                  style={{
+                    flexShrink: 0,
+                    marginTop: "1px",
+                    display: "inline-flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    width: "20px",
+                    height: "20px",
+                    borderRadius: "50%",
+                    color: featured ? "#ffc440" : "var(--color-primary)",
+                    background: featured ? "rgba(255, 196, 64, 0.14)" : "rgba(64, 224, 208, 0.12)",
+                    border: `1px solid ${featured ? "rgba(255, 196, 64, 0.5)" : "rgba(64, 224, 208, 0.4)"}`,
+                  }}
+                >
+                  <svg width="11" height="11" viewBox="0 0 24 24" {...ICON_PROPS} aria-hidden>
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
+                </span>
+                <div style={{ minWidth: 0 }}>
+                  <div style={{ color: "#ffffff", fontSize: "0.9rem", fontWeight: 700, lineHeight: 1.35 }}>
+                    {pr.journal}
+                  </div>
+                  {pr.detail && (
+                    <div style={{ color: "var(--color-text-muted)", fontSize: "0.8rem", lineHeight: 1.4 }}>
+                      {pr.detail}
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       <hr style={{ border: "none", borderTop: "1px solid rgba(255, 255, 255, 0.08)", margin: "0 0 1.5rem 0" }} />
 
