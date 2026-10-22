@@ -8,6 +8,7 @@
  *
  *   local:      node scripts/seed-founder.js
  *   production: DATABASE_URL="postgres://..." node scripts/seed-founder.js
+ *   (the Vercel build also runs it with --if-missing, see below)
  *
  * It is idempotent — safe to run repeatedly — but it overwrites the founder's
  * profile fields, so edits made in the admin panel at /admin/team are replaced.
@@ -94,7 +95,19 @@ const data = {
   order: 0,
 };
 
+// The production build runs this with --if-missing: it seeds only while no member holds the
+// founder spotlight, so admin-panel edits are never overwritten and a failure never blocks a deploy.
+const IF_MISSING = process.argv.includes("--if-missing");
+
 async function main() {
+  if (IF_MISSING) {
+    const founder = await prisma.teamMember.findFirst({ where: { isFounder: true } });
+    if (founder) {
+      console.log(`Founder already set (${founder.name}) — skipping seed.`);
+      return;
+    }
+  }
+
   const existing = await prisma.teamMember.findFirst({
     where: { OR: [{ email: FOUNDER_EMAIL }, { name: { contains: "Arian" } }] },
   });
@@ -114,5 +127,5 @@ async function main() {
 }
 
 main()
-  .catch((e) => { console.error(e); process.exit(1); })
+  .catch((e) => { console.error(e); process.exit(IF_MISSING ? 0 : 1); })
   .finally(() => prisma.$disconnect());
