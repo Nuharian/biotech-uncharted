@@ -76,8 +76,8 @@ const skills = [
 
 const data = {
   name: "Arian Nuhan",
-  role: "Founder",
-  position: "Founder",
+  role: "Founder & Director",
+  position: "Founder & Director",
   email: FOUNDER_EMAIL,
   bio: skills,
   profile,
