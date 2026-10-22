@@ -1,10 +1,14 @@
 import { prisma } from "@/lib/prisma";
+import { getFounder } from "@/lib/founder";
 import Link from "next/link";
+import FounderFeature from "@/components/FounderFeature";
 import styles from "./page.module.css";
 
 export const revalidate = 0; // Dynamic for now
 
 export default async function Home() {
+  const founder = await getFounder();
+
   const news = await prisma.news.findMany({
     where: { isHighlighted: true },
     orderBy: { publishedAt: 'desc' },
@@ -27,6 +31,12 @@ export default async function Home() {
       <section className={`${styles.hero} animate-fade-in`}>
         <div className="container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '3rem', flexWrap: 'wrap' }}>
           <div style={{ flex: '1.2', minWidth: '320px' }}>
+            {founder && (
+              <Link href="/team#founder" className={styles.founderChip}>
+                {founder.imageUrl && <img src={founder.imageUrl} alt="" className={styles.founderChipImg} />}
+                <span>Founded by <strong className={styles.founderChipName}>{founder.name}</strong></span>
+              </Link>
+            )}
             <h1 className={styles.heroTitle}>Pioneering the Future of <span className={styles.textAccent}>Biotech</span></h1>
             <p className={styles.heroSubtitle}>Explore the cutting-edge research and unearth the mysteries of biological science with our latest publications and insights.</p>
             <div className={styles.heroActions}>
@@ -50,6 +60,8 @@ export default async function Home() {
           </div>
         </div>
       </section>
+
+      {founder && <FounderFeature member={founder} />}
 
       <section className="section container">
         <h2 className={styles.sectionTitle}>Highlighted <span className={styles.textAccent}>News</span></h2>

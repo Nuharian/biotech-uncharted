@@ -20,6 +20,9 @@ export default function Footer() {
           <p className={styles.tagline}>
             Charting the uncharted territories of biological science and AI-driven biotechnology.
           </p>
+          <Link href="/team#founder" className={styles.founder}>
+            ★ Founded by <strong>Arian Nuhan</strong>
+          </Link>
         </div>
 
         <nav className={styles.linksCol} aria-label="Footer">

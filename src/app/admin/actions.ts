@@ -36,11 +36,17 @@ export async function createTeamMember(formData: FormData) {
   const linkedinUrl = formData.get("linkedinUrl") as string;
   const researchGateUrl = formData.get("researchGateUrl") as string;
   const googleScholarUrl = formData.get("googleScholarUrl") as string;
+  const githubUrl = formData.get("githubUrl") as string;
+  const profile = formData.get("profile") as string;
   const peerReviews = formData.get("peerReviews") as string;
+  const highlights = formData.get("highlights") as string;
+  const honours = formData.get("honours") as string;
+  const stats = formData.get("stats") as string;
   const categoryId = formData.get("categoryId") as string;
   const orderStr = formData.get("order") as string;
   const imageFile = formData.get("image");
   const isHighlighted = formData.get("isHighlighted") === "yes";
+  const isFounder = formData.get("isFounder") === "yes";
 
   let imageUrl = "";
   const order = orderStr ? parseInt(orderStr, 10) : 0;
@@ -48,27 +54,45 @@ export async function createTeamMember(formData: FormData) {
   // Convert uploaded image to Base64 data URL to bypass Vercel read-only filesystem limitations
   imageUrl = (await fileToDataUrl(imageFile)) || "";
 
-  await prisma.teamMember.create({
+  const created = await prisma.teamMember.create({
     data: {
       name,
       role: role || position || "Member",
       position: position || role || "Member",
       email: email || null,
       bio: bio || null,
+      profile: profile || null,
       peerReviews: peerReviews || null,
+      highlights: highlights || null,
+      honours: honours || null,
+      stats: stats || null,
       imageUrl: imageUrl || null,
       linkedinUrl: linkedinUrl || null,
       researchGateUrl: researchGateUrl || null,
       googleScholarUrl: googleScholarUrl || null,
+      githubUrl: githubUrl || null,
       isHighlighted,
+      isFounder,
       order: isNaN(order) ? 0 : order,
       categoryId: categoryId && categoryId !== "none" ? categoryId : null,
     }
   });
 
+  // Only one member may hold the founder spotlight.
+  if (isFounder) await demoteOtherFounders(created.id);
+
   revalidatePath("/admin/team");
   revalidatePath("/team");
   revalidatePath("/");
+}
+
+// The founder spotlight is a single slot: promoting one member clears the flag on the rest,
+// so the team page can never render two spotlight banners.
+async function demoteOtherFounders(keepId: string) {
+  await prisma.teamMember.updateMany({
+    where: { isFounder: true, id: { not: keepId } },
+    data: { isFounder: false },
+  });
 }
 
 // Convert an uploaded image File into a Base64 data URL (or null if no file).
@@ -102,11 +126,17 @@ export async function updateTeamMember(formData: FormData) {
   const linkedinUrl = formData.get("linkedinUrl") as string;
   const researchGateUrl = formData.get("researchGateUrl") as string;
   const googleScholarUrl = formData.get("googleScholarUrl") as string;
+  const githubUrl = formData.get("githubUrl") as string;
+  const profile = formData.get("profile") as string;
   const peerReviews = formData.get("peerReviews") as string;
+  const highlights = formData.get("highlights") as string;
+  const honours = formData.get("honours") as string;
+  const stats = formData.get("stats") as string;
   const categoryId = formData.get("categoryId") as string;
   const orderStr = formData.get("order") as string;
   const imageFile = formData.get("image");
   const isHighlighted = formData.get("isHighlighted") === "yes";
+  const isFounder = formData.get("isFounder") === "yes";
   const removeImage = formData.get("removeImage") === "yes";
 
   const order = orderStr ? parseInt(orderStr, 10) : 0;
@@ -129,16 +159,25 @@ export async function updateTeamMember(formData: FormData) {
         role: position || name || "Member",
         email: email || null,
         bio: bio || null,
+        profile: profile || null,
         peerReviews: peerReviews || null,
+        highlights: highlights || null,
+        honours: honours || null,
+        stats: stats || null,
         linkedinUrl: linkedinUrl || null,
         researchGateUrl: researchGateUrl || null,
         googleScholarUrl: googleScholarUrl || null,
+        githubUrl: githubUrl || null,
         isHighlighted,
+        isFounder,
         order: isNaN(order) ? 0 : order,
         categoryId: categoryId && categoryId !== "none" ? categoryId : null,
         ...(imageUrl !== undefined ? { imageUrl } : {}),
       }
     });
+
+    // Only one member may hold the founder spotlight.
+    if (isFounder) await demoteOtherFounders(id);
   } catch (err) {
     console.error("Failed to update team member:", err);
   }

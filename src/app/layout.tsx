@@ -17,7 +17,10 @@ export const metadata: Metadata = {
   },
   description:
     "BioTech Uncharted explores the frontiers of biological science and AI-driven biotechnology — research, publications, and discoveries from our team.",
-  keywords: ["biotech", "biotechnology", "computational biology", "research", "publications", "synthetic biology"],
+  keywords: ["biotech", "biotechnology", "computational biology", "research", "publications", "synthetic biology", "Arian Nuhan"],
+  authors: [{ name: "Arian Nuhan", url: "https://biotech-uncharted.vercel.app/team#founder" }],
+  creator: "Arian Nuhan",
+  publisher: "BioTech Uncharted",
   openGraph: {
     title: "BioTech Uncharted",
     description: "Pioneering the future of biotech — research, publications, and discoveries.",

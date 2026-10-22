@@ -28,6 +28,40 @@
   100% { transform: scale(1.1); }
 }
 
+.founderChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  margin-bottom: 1.5rem;
+  padding: 0.35rem 1rem 0.35rem 0.35rem;
+  border-radius: 999px;
+  font-size: 0.95rem;
+  color: #ffe9a8;
+  background: rgba(255, 196, 64, 0.1);
+  border: 1px solid rgba(255, 196, 64, 0.5);
+  box-shadow: 0 0 22px rgba(255, 196, 64, 0.18);
+}
+
+.founderChip:hover {
+  color: #ffe9a8;
+  background: rgba(255, 196, 64, 0.18);
+  box-shadow: 0 0 28px rgba(255, 196, 64, 0.35);
+}
+
+.founderChipImg {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: center top;
+  border: 2px solid #ffc440;
+}
+
+.founderChipName {
+  color: #ffc440;
+  font-weight: 800;
+}
+
 .heroTitle {
   font-size: clamp(3rem, 8vw, 5rem);
   max-width: 800px;

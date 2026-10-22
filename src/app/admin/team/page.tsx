@@ -228,8 +228,45 @@ export default async function AdminTeam() {
             </div>
 
             <div className={styles.formGroup}>
+              <label htmlFor="githubUrl">GitHub URL</label>
+              <input type="url" id="githubUrl" name="githubUrl" placeholder="https://github.com/..." />
+            </div>
+
+            <div className={styles.formGroup}>
               <label>Skills & Interest</label>
               <SkillsInput name="bio" />
+            </div>
+
+            <div className={styles.formGroup}>
+              <label htmlFor="profile">Full Biography (founder spotlight only)</label>
+              <textarea id="profile" name="profile" rows={5} placeholder="Long-form biography. Separate paragraphs with a blank line."></textarea>
+              <small style={{ color: 'var(--color-text-muted)', fontSize: '0.75rem' }}>
+                Only rendered for the member holding the <strong>founder spotlight</strong>. Separate paragraphs with a blank line.
+              </small>
+            </div>
+
+            <div className={styles.formGroup}>
+              <label htmlFor="highlights">Research &amp; Recognition (one per line)</label>
+              <textarea id="highlights" name="highlights" rows={3} placeholder={"BSc Computer Science & Engineering, BRAC University | Highest Distinction — CGPA 3.96/4.00\nHELO Cryptography (arXiv:2605.03948) | Co-author, lightweight cryptography for IoT"}></textarea>
+              <small style={{ color: 'var(--color-text-muted)', fontSize: '0.75rem' }}>
+                One per line, as <strong>Label | detail</strong>. Shown in the founder spotlight.
+              </small>
+            </div>
+
+            <div className={styles.formGroup}>
+              <label htmlFor="honours">Honours &amp; Leadership (one per line)</label>
+              <textarea id="honours" name="honours" rows={3} placeholder={"Highest Seed Grant (IC5), BRAC University — 2025 | Awarded for an Autonomous Underwater Vehicle project\nFinalist, APAC HPC-AI Competition — 2024 | National Supercomputing Centre (NSCC)"}></textarea>
+              <small style={{ color: 'var(--color-text-muted)', fontSize: '0.75rem' }}>
+                One per line, as <strong>Label | detail</strong>. Shown in the founder spotlight.
+              </small>
+            </div>
+
+            <div className={styles.formGroup}>
+              <label htmlFor="stats">Headline Numbers (one per line)</label>
+              <textarea id="stats" name="stats" rows={3} placeholder={"3.96 | CGPA — Highest Distinction\n11 / 11 | Semesters on the Vice-Chancellor's List"}></textarea>
+              <small style={{ color: 'var(--color-text-muted)', fontSize: '0.75rem' }}>
+                One per line, as <strong>Value | caption</strong>. Shown as stat tiles on the founder spotlight and homepage.
+              </small>
             </div>
 
             <div className={styles.formGroup}>
@@ -265,6 +302,29 @@ export default async function AdminTeam() {
                 <label htmlFor="image">Profile Image Upload</label>
                 <input type="file" id="image" name="image" accept="image/*" style={{ border: 'none', background: 'transparent', padding: '0.25rem 0' }} />
               </div>
+            </div>
+
+            <div className={styles.formGroup}>
+              <label htmlFor="isFounder">Founder spotlight?</label>
+              <select
+                id="isFounder"
+                name="isFounder"
+                defaultValue="no"
+                style={{
+                  padding: '0.75rem',
+                  borderRadius: 'var(--border-radius)',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  background: 'rgba(2, 11, 26, 0.9)',
+                  color: 'white',
+                  outline: 'none'
+                }}
+              >
+                <option value="no">No — appears in the team grid</option>
+                <option value="yes">Yes — full-width spotlight above everyone</option>
+              </select>
+              <small style={{ color: 'var(--color-text-muted)', fontSize: '0.75rem' }}>
+                Only one member can hold this. Setting it here clears it from anyone else.
+              </small>
             </div>
 
             <button type="submit" className="btn btn-primary" style={{ marginTop: '0.5rem' }}>
@@ -323,6 +383,11 @@ export default async function AdminTeam() {
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <div style={{ fontWeight: 'bold', color: '#ffffff', display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
                         {member.name}
+                        {member.isFounder && (
+                          <span style={{ fontSize: '0.65rem', fontWeight: 800, letterSpacing: '0.05em', textTransform: 'uppercase', color: '#020B1A', background: '#ffc440', border: '1px solid #ffc440', padding: '0.1rem 0.5rem', borderRadius: '999px' }}>
+                            ★ Founder Spotlight
+                          </span>
+                        )}
                         {member.isHighlighted && (
                           <span style={{ fontSize: '0.65rem', fontWeight: 700, letterSpacing: '0.05em', textTransform: 'uppercase', color: '#ffc440', background: 'rgba(255, 196, 64, 0.12)', border: '1px solid rgba(255, 196, 64, 0.4)', padding: '0.1rem 0.5rem', borderRadius: '999px' }}>
                             ★ Featured
@@ -405,8 +470,45 @@ export default async function AdminTeam() {
                     </div>
 
                     <div className={styles.formGroup}>
+                      <label>GitHub URL</label>
+                      <input type="url" name="githubUrl" defaultValue={member.githubUrl || ""} placeholder="https://github.com/..." />
+                    </div>
+
+                    <div className={styles.formGroup}>
                       <label>Skills & Interest</label>
                       <SkillsInput name="bio" defaultValue={member.bio || ""} />
+                    </div>
+
+                    <div className={styles.formGroup}>
+                      <label>Full Biography (founder spotlight only)</label>
+                      <textarea name="profile" rows={6} defaultValue={member.profile || ""} placeholder="Long-form biography. Separate paragraphs with a blank line."></textarea>
+                      <small style={{ color: 'var(--color-text-muted)', fontSize: '0.75rem' }}>
+                        Only rendered for the member holding the <strong>founder spotlight</strong>. Separate paragraphs with a blank line.
+                      </small>
+                    </div>
+
+                    <div className={styles.formGroup}>
+                      <label>Research &amp; Recognition (one per line)</label>
+                      <textarea name="highlights" rows={4} defaultValue={member.highlights || ""} placeholder={"BSc Computer Science & Engineering, BRAC University | Highest Distinction — CGPA 3.96/4.00\nHELO Cryptography (arXiv:2605.03948) | Co-author, lightweight cryptography for IoT"}></textarea>
+                      <small style={{ color: 'var(--color-text-muted)', fontSize: '0.75rem' }}>
+                        One per line, as <strong>Label | detail</strong>. Shown in the founder spotlight.
+                      </small>
+                    </div>
+
+                    <div className={styles.formGroup}>
+                      <label>Honours &amp; Leadership (one per line)</label>
+                      <textarea name="honours" rows={4} defaultValue={member.honours || ""} placeholder={"Highest Seed Grant (IC5), BRAC University — 2025 | Awarded for an Autonomous Underwater Vehicle project\nFinalist, APAC HPC-AI Competition — 2024 | National Supercomputing Centre (NSCC)"}></textarea>
+                      <small style={{ color: 'var(--color-text-muted)', fontSize: '0.75rem' }}>
+                        One per line, as <strong>Label | detail</strong>. Shown in the founder spotlight.
+                      </small>
+                    </div>
+
+                    <div className={styles.formGroup}>
+                      <label>Headline Numbers (one per line)</label>
+                      <textarea name="stats" rows={4} defaultValue={member.stats || ""} placeholder={"3.96 | CGPA — Highest Distinction\n11 / 11 | Semesters on the Vice-Chancellor's List"}></textarea>
+                      <small style={{ color: 'var(--color-text-muted)', fontSize: '0.75rem' }}>
+                        One per line, as <strong>Value | caption</strong>. Shown as stat tiles on the founder spotlight and homepage.
+                      </small>
                     </div>
 
                     <div className={styles.formGroup}>
@@ -439,6 +541,21 @@ export default async function AdminTeam() {
                           </label>
                         )}
                       </div>
+                    </div>
+
+                    <div className={styles.formGroup}>
+                      <label>Founder spotlight?</label>
+                      <select
+                        name="isFounder"
+                        defaultValue={member.isFounder ? "yes" : "no"}
+                        style={{ padding: '0.75rem', borderRadius: 'var(--border-radius)', border: '1px solid rgba(255, 255, 255, 0.1)', background: 'rgba(2, 11, 26, 0.9)', color: 'white', outline: 'none' }}
+                      >
+                        <option value="no">No — appears in the team grid</option>
+                        <option value="yes">Yes — full-width spotlight above everyone</option>
+                      </select>
+                      <small style={{ color: 'var(--color-text-muted)', fontSize: '0.75rem' }}>
+                        Only one member can hold this. Setting it here clears it from anyone else.
+                      </small>
                     </div>
 
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.5rem', marginTop: '0.5rem' }}>

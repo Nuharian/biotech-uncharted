@@ -51,10 +51,16 @@ model TeamMember {
   linkedinUrl      String?
   researchGateUrl  String?
   googleScholarUrl String?
+  githubUrl        String?
   bio              String?
+  profile          String?  // Long-form biography, rendered in the founder spotlight
   peerReviews      String?
+  highlights       String?  // "Label | detail" per line — research & credential highlights
+  honours          String?  // "Label | detail" per line — awards & leadership, shown beside highlights
+  stats            String?  // "Value | caption" per line — headline numbers in the founder spotlight
   imageUrl         String?
   isHighlighted    Boolean       @default(false)
+  isFounder        Boolean       @default(false) // Renders as the full-width spotlight above the team grid
   order            Int           @default(0)
   categoryId       String?
   category         TeamCategory? @relation(fields: [categoryId], references: [id], onDelete: SetNull)

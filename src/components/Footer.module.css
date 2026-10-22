@@ -35,6 +35,22 @@
   line-height: 1.7;
 }
 
+.founder {
+  display: inline-block;
+  margin-top: 1rem;
+  font-size: 0.88rem;
+  color: #ffe9a8;
+}
+
+.founder strong {
+  color: #ffc440;
+}
+
+.founder:hover {
+  color: #ffc440;
+  text-shadow: 0 0 12px rgba(255, 196, 64, 0.45);
+}
+
 .colTitle {
   font-size: 0.8rem;
   text-transform: uppercase;
